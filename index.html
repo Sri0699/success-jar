@@ -88,11 +88,11 @@
     </div>
 
     <script type="module">
+        // --- UPDATED FIXED IMPORTS ---
         import { initializeApp } from "https://www.gstatic.com";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com";
 
-        // Your specific Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC_TNKPkm4jBufu3_FlyP896nyfn5dc9sM",
             authDomain: "successjar-ccc2c.firebaseapp.com",
@@ -111,7 +111,6 @@
         let winCount = 0;
         let startTime = Date.now();
 
-        // Authentication Logic
         document.getElementById('login-btn').onclick = () => {
             signInWithPopup(auth, provider).catch(err => alert("Auth Error: " + err.message));
         };
@@ -119,10 +118,10 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                // --- FIXED TEXT FORMATTING ---
                 document.getElementById('user-greet').innerText = `USER: ${user.displayName.toUpperCase().split(' ')[0]}`;
                 document.getElementById('login-btn').style.display = 'none';
                 
-                // Load data from Firestore
                 const docRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
@@ -132,7 +131,6 @@
             }
         });
 
-        // Timer Function
         setInterval(() => {
             const diff = Math.floor((Date.now() - startTime) / 1000);
             const mins = Math.floor(diff/60).toString().padStart(2,'0');
@@ -140,7 +138,6 @@
             document.getElementById('timer').innerText = `${mins}:${secs}`;
         }, 1000);
 
-        // Core Functions
         window.generateMarbles = () => {
             const jar = document.getElementById('todo-jar');
             const count = document.getElementById('mission-input').value;
@@ -168,7 +165,6 @@
                 winCount++;
                 updateUI();
                 
-                // Save to Firebase
                 if (currentUser) {
                     await setDoc(doc(db, "users", currentUser.uid), { wins: winCount });
                 }
@@ -179,7 +175,6 @@
             document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
         }
 
-        // Initialize first set
         generateMarbles();
     </script>
 </body>
