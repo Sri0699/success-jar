@@ -24,34 +24,58 @@
         .controls { margin-top: 40px; display: flex; gap: 15px; align-items: center; background: var(--glass); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
         input { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 10px; width: 50px; border-radius: 5px; font-family: var(--font-main); text-align: center; }
         .btn-gen { background: var(--color1); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-family: var(--font-main); font-weight: bold; }
+        /* Timer Control Styles */
+        .timer-controls { display: flex; gap: 5px; margin-top: 5px; }
+        .btn-t { background: #43e97b; border: none; padding: 4px 8px; font-family: var(--font-main); font-size: 0.6rem; cursor: pointer; border-radius: 3px; font-weight: bold; }
+        .btn-t.stop { background: var(--color1); color: white; }
+
+        /* Visual Reset Button */
+        .btn-clear { background: none; border: 1px solid var(--border); color: white; font-size: 0.6rem; padding: 5px; cursor: pointer; margin-top: 10px; opacity: 0.5; }
+        .btn-clear:hover { opacity: 1; }
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="dashboard">
-            <div class="stat-box"><span class="stat-val" id="total-wins">00</span><span class="stat-label">Total Wins</span></div>
-            <div class="stat-box"><span class="stat-val" id="timer">00:00</span><span class="stat-label">Active</span></div>
+            <!-- Total Wins Box -->
+            <div class="stat-box">
+                <span class="stat-val" id="total-wins">00</span>
+                <span class="stat-label">Total Wins</span>
+            </div>
+
+            <!-- Timer Box -->
+            <div class="stat-box">
+                <span class="stat-val" id="timer">00:00</span>
+                <div class="timer-controls">
+                    <button class="btn-t" id="timer-btn">START</button>
+                    <button class="btn-t" id="timer-reset">RESET</button>
+                </div>
+            </div>
         </div>
-        <div>
+
+        <div class="user-controls">
             <span id="user-greet">SYSTEM_OFFLINE</span>
             <button class="auth-btn" id="login-btn">AUTH_GOOGLE</button>
         </div>
     </div>
 
     <div class="game-world">
-        <div class="jar" id="todo-jar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-        <div class="jar" id="success-jar" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
+        <div class="jar-wrap">
+            <div class="jar" id="todo-jar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        </div>
+        <div class="jar-wrap">
+            <div class="jar" id="success-jar" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
+            <button class="btn-clear" id="clear-vault">EMPTY_VISUALLY</button>
+        </div>
     </div>
 
     <div class="controls">
         <span>LOAD_MISSIONS:</span>
-        <input type="number" id="mission-input" value="3" min="1">
+        <input type="number" id="mission-input" value="3" min="1" max="100">
         <button class="btn-gen" id="gen-btn">EXECUTE</button>
     </div>
 
     <script type="module">
-        // POINTING TO SPECIFIC VERSIONED FILES
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -69,15 +93,17 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+        const clink = new Audio('https://assets.mixkit.co');
 
         let currentUser = null;
         let winCount = 0;
-        let startTime = Date.now();
+        let seconds = 0;
+        let timerInterval = null;
 
-        // Fix for "generateMarbles is not defined"
+        // --- MARBLE GENERATION (Capped at 100 to prevent hanging) ---
         const generateMarbles = () => {
             const jar = document.getElementById('todo-jar');
-            const count = document.getElementById('mission-input').value;
+            const count = Math.min(document.getElementById('mission-input').value, 100);
             jar.innerHTML = '';
             for(let i=0; i<count; i++) {
                 const m = document.createElement('div');
@@ -90,6 +116,7 @@
 
         document.getElementById('gen-btn').onclick = generateMarbles;
 
+        // --- AUTH ---
         document.getElementById('login-btn').onclick = () => {
             signInWithPopup(auth, provider).catch(err => alert("Error: " + err.message));
         };
@@ -107,7 +134,42 @@
             }
         });
 
-        // Drop logic made global for HTML attributes
+        // --- MANUAL TIMER LOGIC ---
+        document.getElementById('timer-btn').onclick = function() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                this.innerText = "START";
+                this.style.background = "#43e97b";
+            } else {
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const m = Math.floor(seconds/60).toString().padStart(2,'0');
+                    const s = (seconds%60).toString().padStart(2,'0');
+                    document.getElementById('timer').innerText = `${m}:${s}`;
+                }, 1000);
+                this.innerText = "STOP";
+                this.style.background = "#ff007a";
+            }
+        };
+
+        document.getElementById('timer-reset').onclick = () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            seconds = 0;
+            document.getElementById('timer').innerText = "00:00";
+            document.getElementById('timer-btn').innerText = "START";
+            document.getElementById('timer-btn').style.background = "#43e97b";
+        };
+
+        // --- VISUAL RESET ---
+        document.getElementById('clear-vault').onclick = () => {
+            if(confirm("Empty the jar visually? Wins stay saved!")) {
+                document.getElementById('success-jar').innerHTML = '';
+            }
+        };
+
+        // --- DROP LOGIC ---
         window.allowDrop = (e) => e.preventDefault();
         window.drop = async (e) => {
             e.preventDefault();
@@ -116,18 +178,14 @@
             const target = e.target.closest('.jar');
             if (target && target.id === 'success-jar' && marble.parentElement.id !== 'success-jar') {
                 target.appendChild(marble);
+                clink.play(); // Sound Effect
                 winCount++;
                 document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
                 if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { wins: winCount });
             }
         };
 
-        setInterval(() => {
-            const diff = Math.floor((Date.now() - startTime) / 1000);
-            document.getElementById('timer').innerText = `${Math.floor(diff/60).toString().padStart(2,'0')}:${(diff%60).toString().padStart(2,'0')}`;
-        }, 1000);
-
         generateMarbles();
     </script>
 </body>
-</html>
+
