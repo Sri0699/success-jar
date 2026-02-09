@@ -4,101 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jar of Wins</title>
-    <!-- Lively Fonts -->
-    <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
         :root {
-            --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --glass: rgba(255, 255, 255, 0.15);
-            --border: rgba(255, 255, 255, 0.3);
-            --accent: #ff007a;
+            /* Vibrant Aurora Colors */
+            --color1: #ff007a;
+            --color2: #764ba2;
+            --color3: #667eea;
+            --glass: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.25);
+            /* Your Favorite Font */
+            --font-main: 'Courier New', Courier, monospace;
         }
 
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: var(--bg);
-            margin: 0; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; overflow: hidden;
+            font-family: var(--font-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+            /* Aurora Background Animation */
+            background: linear-gradient(45deg, #0f172a, #1e293b);
+            position: relative;
         }
 
-        h1 { font-family: 'Fredoka One', cursive; font-size: 2.5rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); }
+        /* Animated Aurora Blobs */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300%; height: 300%;
+            top: -100%; left: -100%;
+            background: radial-gradient(circle at center, var(--color1) 0%, transparent 20%),
+                        radial-gradient(circle at 20% 30%, var(--color2) 0%, transparent 25%),
+                        radial-gradient(circle at 80% 70%, var(--color3) 0%, transparent 25%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: aurora 20s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes aurora {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 { 
+            font-size: 2.8rem; 
+            letter-spacing: -1px; 
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
 
         .game-world {
-            display: flex; gap: 60px; align-items: center;
+            display: flex; gap: 80px; align-items: flex-end;
         }
 
         .jar-container {
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
 
-        /* Glassmorphism Jars */
         .jar {
-            width: 180px; height: 260px;
+            width: 200px; height: 280px;
             background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--border);
-            border-radius: 20px 20px 60px 60px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px 20px 80px 80px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.1);
             position: relative;
-            padding: 15px;
-            display: flex; flex-wrap: wrap-reverse; align-content: flex-start; gap: 8px;
-            transition: transform 0.3s ease;
+            padding: 20px;
+            display: flex; flex-wrap: wrap-reverse; align-content: flex-start; gap: 10px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .jar.over { transform: scale(1.05); border-color: #fff; background: rgba(255,255,255,0.25); }
+        /* Hover & Drag Over Effects */
+        .jar.over { 
+            transform: scale(1.08); 
+            border-color: rgba(255,255,255,0.8);
+            box-shadow: 0 0 30px var(--color1);
+        }
 
-        /* The Marbles */
         .marble {
-            width: 35px; height: 35px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             cursor: grab;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
+            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.3);
             transition: transform 0.2s;
             z-index: 10;
+            animation: popIn 0.5s ease-out;
         }
 
-        .marble:active { cursor: grabbing; transform: scale(0.9); }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
 
         .counter {
-            font-size: 1.2rem; font-weight: bold; background: white; color: #764ba2;
-            padding: 5px 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            background: rgba(255,255,255,0.1);
+            padding: 8px 25px; 
+            border-radius: 5px; 
+            border: 1px solid var(--border);
         }
 
-        .label { font-weight: bold; letter-spacing: 1px; text-transform: uppercase; opacity: 0.8; }
+        .label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; }
     </style>
 </head>
 <body>
 
-    <h1>Your Win Jar</h1>
+    <h1>MISSION_LOG</h1>
 
     <div class="game-world">
         <div class="jar-container">
-            <span class="label">Missions</span>
+            <span class="label">Pending</span>
             <div id="todo-jar" class="jar" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="marble" draggable="true" ondragstart="drag(event)" id="m1" style="background: radial-gradient(circle at 30% 30%, #ff9a9e, #fecfef);"></div>
-                <div class="marble" draggable="true" ondragstart="drag(event)" id="m2" style="background: radial-gradient(circle at 30% 30%, #a1c4fd, #c2e9fb);"></div>
-                <div class="marble" draggable="true" ondragstart="drag(event)" id="m3" style="background: radial-gradient(circle at 30% 30%, #84fab0, #8fd3f4);"></div>
-                <div class="marble" draggable="true" ondragstart="drag(event)" id="m4" style="background: radial-gradient(circle at 30% 30%, #fccb90, #d57eeb);"></div>
+                <!-- Pre-filled marbles -->
+                <div class="marble" draggable="true" ondragstart="drag(event)" id="m1" style="background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);"></div>
+                <div class="marble" draggable="true" ondragstart="drag(event)" id="m2" style="background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe);"></div>
+                <div class="marble" draggable="true" ondragstart="drag(event)" id="m3" style="background: radial-gradient(circle at 30% 30%, #43e97b, #38f9d7);"></div>
+                <div class="marble" draggable="true" ondragstart="drag(event)" id="m4" style="background: radial-gradient(circle at 30% 30%, #fa709a, #fee140);"></div>
             </div>
         </div>
 
         <div class="jar-container">
-            <span class="label">Accomplished</span>
+            <span class="label">Success</span>
             <div id="success-jar" class="jar" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')">
             </div>
-            <div class="counter" id="count">0 Wins</div>
+            <div class="counter" id="count">00_WINS</div>
         </div>
     </div>
 
     <script>
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
+        function allowDrop(ev) { ev.preventDefault(); }
 
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
 
         function drop(ev) {
             ev.preventDefault();
@@ -109,13 +152,20 @@
             if (targetJar) {
                 targetJar.appendChild(marble);
                 targetJar.classList.remove('over');
+                
+                // Add a "Drop" animation
+                marble.style.animation = 'none';
+                void marble.offsetWidth; // Trigger reflow
+                marble.style.animation = 'popIn 0.3s ease-out';
+                
                 updateCounter();
             }
         }
 
         function updateCounter() {
             const count = document.getElementById('success-jar').children.length;
-            document.getElementById('count').innerText = `${count} Wins`;
+            // Formatting to match the "Courier" coder vibe
+            document.getElementById('count').innerText = count.toString().padStart(2, '0') + "_WINS";
         }
     </script>
 </body>
