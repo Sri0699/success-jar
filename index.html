@@ -5,51 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mission Control | Success Jar</title>
     <style>
-        /* --- CSS STYLES --- */
-        :root {
-            --color1: #ff007a; --color2: #764ba2; --color3: #667eea;
-            --glass: rgba(255, 255, 255, 0.1);
-            --border: rgba(255, 255, 255, 0.2);
-            --font-main: 'Courier New', Courier, monospace;
-        }
-        body {
-            font-family: var(--font-main); margin: 0; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; overflow: hidden; background: #0f172a; position: relative;
-        }
-        /* Animated Aurora */
-        body::before {
-            content: ""; position: absolute; width: 300%; height: 300%; top: -100%; left: -100%;
-            background: radial-gradient(circle at center, var(--color1) 0%, transparent 20%),
-                        radial-gradient(circle at 20% 30%, var(--color2) 0%, transparent 25%),
-                        radial-gradient(circle at 80% 70%, var(--color3) 0%, transparent 25%);
-            filter: blur(100px); z-index: -1; animation: aurora 30s linear infinite; opacity: 0.4;
-        }
+        :root { --color1: #ff007a; --color2: #764ba2; --color3: #667eea; --glass: rgba(255, 255, 255, 0.1); --border: rgba(255, 255, 255, 0.2); --font-main: 'Courier New', Courier, monospace; }
+        body { font-family: var(--font-main); margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; overflow: hidden; background: #0f172a; position: relative; }
+        body::before { content: ""; position: absolute; width: 300%; height: 300%; top: -100%; left: -100%; background: radial-gradient(circle at center, var(--color1) 0%, transparent 20%), radial-gradient(circle at 20% 30%, var(--color2) 0%, transparent 25%), radial-gradient(circle at 80% 70%, var(--color3) 0%, transparent 25%); filter: blur(100px); z-index: -1; animation: aurora 30s linear infinite; opacity: 0.4; }
         @keyframes aurora { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Layout */
         .header { position: absolute; top: 30px; width: 85%; display: flex; justify-content: space-between; align-items: center; }
         .dashboard { display: flex; gap: 40px; background: var(--glass); padding: 15px 30px; border-radius: 10px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .stat-box { text-align: center; }
         .stat-val { font-size: 2rem; font-weight: bold; display: block; color: var(--color1); }
         .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; }
-
-        .auth-btn { background: white; color: black; border: none; padding: 10px 20px; font-family: var(--font-main); cursor: pointer; border-radius: 5px; font-weight: bold; transition: 0.3s; }
-        .auth-btn:hover { background: var(--color1); color: white; }
+        .auth-btn { background: white; color: black; border: none; padding: 10px 20px; font-family: var(--font-main); cursor: pointer; border-radius: 5px; font-weight: bold; }
         #user-greet { font-size: 0.8rem; margin-right: 15px; text-transform: uppercase; border-right: 2px solid var(--color1); padding-right: 10px; }
-
         .game-world { display: flex; gap: 80px; align-items: flex-end; margin-top: 50px; }
-        .jar-wrap { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .jar { 
-            width: 180px; height: 280px; background: var(--glass); border: 2px solid var(--border); 
-            border-radius: 20px 20px 80px 80px; padding: 20px; display: flex; flex-wrap: wrap-reverse; 
-            align-content: flex-start; gap: 10px; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
+        .jar { width: 180px; height: 280px; background: var(--glass); border: 2px solid var(--border); border-radius: 20px 20px 80px 80px; padding: 20px; display: flex; flex-wrap: wrap-reverse; align-content: flex-start; gap: 10px; transition: 0.3s; }
         .jar.over { transform: scale(1.1); border-color: white; box-shadow: 0 0 40px var(--color1); }
-
-        .marble { width: 38px; height: 38px; border-radius: 50%; cursor: grab; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.5); z-index: 10; transition: transform 0.2s; }
-        .marble:active { cursor: grabbing; transform: scale(0.9); }
-
+        .marble { width: 38px; height: 38px; border-radius: 50%; cursor: grab; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.5); z-index: 10; }
         .controls { margin-top: 40px; display: flex; gap: 15px; align-items: center; background: var(--glass); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
         input { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 10px; width: 50px; border-radius: 5px; font-family: var(--font-main); text-align: center; }
         .btn-gen { background: var(--color1); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-family: var(--font-main); font-weight: bold; }
@@ -60,42 +30,31 @@
     <div class="header">
         <div class="dashboard">
             <div class="stat-box"><span class="stat-val" id="total-wins">00</span><span class="stat-label">Total Wins</span></div>
-            <div class="stat-box"><span class="stat-val" id="timer">00:00</span><span class="stat-label">Session Time</span></div>
+            <div class="stat-box"><span class="stat-val" id="timer">00:00</span><span class="stat-label">Active</span></div>
         </div>
         <div>
-            <span id="user-greet">LOG_IN_REQUIRED</span>
+            <span id="user-greet">SYSTEM_OFFLINE</span>
             <button class="auth-btn" id="login-btn">AUTH_GOOGLE</button>
         </div>
     </div>
 
     <div class="game-world">
-        <div class="jar-wrap">
-            <span style="font-size: 0.7rem; opacity: 0.6;">PENDING_TASKS</span>
-            <div class="jar" id="todo-jar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-        </div>
-        <div class="jar-wrap">
-            <span style="font-size: 0.7rem; opacity: 0.6;">SUCCESS_VAULT</span>
-            <div class="jar" id="success-jar" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
-        </div>
+        <div class="jar" id="todo-jar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div class="jar" id="success-jar" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
     </div>
 
     <div class="controls">
         <span>LOAD_MISSIONS:</span>
         <input type="number" id="mission-input" value="3" min="1">
-        <button class="btn-gen" onclick="generateMarbles()">EXECUTE</button>
+        <button class="btn-gen" id="gen-btn">EXECUTE</button>
     </div>
 
     <script type="module">
-        console.log("🚀 [1/5] Script Starting...");
-
-        // --- CORRECT IMPORTS (WITH .JS EXTENSION) ---
+        // POINTING TO SPECIFIC VERSIONED FILES
         import { initializeApp } from "https://www.gstatic.com";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com";
 
-        console.log("✅ [2/5] Imports Successful!");
-
-        // --- YOUR CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyC_TNKPkm4jBufu3_FlyP896nyfn5dc9sM",
             authDomain: "successjar-ccc2c.firebaseapp.com",
@@ -114,53 +73,8 @@
         let winCount = 0;
         let startTime = Date.now();
 
-        // --- AUTHENTICATION ---
-        document.getElementById('login-btn').onclick = () => {
-            console.log("🖱️ Clicked Login Button");
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("✅ Login Success:", result.user.email);
-                })
-                .catch((error) => {
-                    console.error("❌ Login Error:", error.message);
-                    alert("Login Failed: " + error.message);
-                });
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                console.log("👤 User Detected:", user.uid);
-                currentUser = user;
-                document.getElementById('user-greet').innerText = `USER: ${user.displayName.toUpperCase().split(' ')[0]}`;
-                document.getElementById('login-btn').style.display = 'none';
-                
-                try {
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        winCount = docSnap.data().wins || 0;
-                        updateUI();
-                        console.log("📂 Data Loaded: Wins =", winCount);
-                    }
-                } catch (err) {
-                    console.error("❌ Database Error:", err);
-                }
-            } else {
-                console.log("⚪ No User Logged In");
-            }
-        });
-
-        // --- TIMER ---
-        setInterval(() => {
-            const diff = Math.floor((Date.now() - startTime) / 1000);
-            const mins = Math.floor(diff/60).toString().padStart(2,'0');
-            const secs = (diff%60).toString().padStart(2,'0');
-            document.getElementById('timer').innerText = `${mins}:${secs}`;
-        }, 1000);
-
-        // --- GAME LOGIC ---
-        window.generateMarbles = () => {
-            console.log("🎲 Generating Marbles...");
+        // Fix for "generateMarbles is not defined"
+        const generateMarbles = () => {
             const jar = document.getElementById('todo-jar');
             const count = document.getElementById('mission-input').value;
             jar.innerHTML = '';
@@ -171,38 +85,48 @@
                 m.ondragstart = (e) => e.dataTransfer.setData("text", e.target.id);
                 jar.appendChild(m);
             }
-            console.log("✅ Marbles Added");
         };
 
+        document.getElementById('gen-btn').onclick = generateMarbles;
+
+        document.getElementById('login-btn').onclick = () => {
+            signInWithPopup(auth, provider).catch(err => alert("Error: " + err.message));
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('user-greet').innerText = `USER: ${user.displayName.toUpperCase().split(' ')[0]}`;
+                document.getElementById('login-btn').style.display = 'none';
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    winCount = docSnap.data().wins || 0;
+                    document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
+                }
+            }
+        });
+
+        // Drop logic made global for HTML attributes
         window.allowDrop = (e) => e.preventDefault();
-        
         window.drop = async (e) => {
             e.preventDefault();
             const id = e.dataTransfer.getData("text");
             const marble = document.getElementById(id);
             const target = e.target.closest('.jar');
-            
             if (target && target.id === 'success-jar' && marble.parentElement.id !== 'success-jar') {
                 target.appendChild(marble);
-                target.classList.remove('over');
                 winCount++;
-                updateUI();
-                console.log("🏆 Win! New Count:", winCount);
-                
-                if (currentUser) {
-                    await setDoc(doc(db, "users", currentUser.uid), { wins: winCount });
-                    console.log("💾 Saved to Cloud");
-                }
+                document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
+                if (currentUser) await setDoc(doc(db, "users", currentUser.uid), { wins: winCount });
             }
         };
 
-        function updateUI() {
-            document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
-        }
+        setInterval(() => {
+            const diff = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').innerText = `${Math.floor(diff/60).toString().padStart(2,'0')}:${(diff%60).toString().padStart(2,'0')}`;
+        }, 1000);
 
-        console.log("🚀 [3/5] Starting App...");
         generateMarbles();
-        console.log("✅ [4/5] App Ready!");
     </script>
 </body>
 </html>
