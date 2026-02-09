@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Success Jar</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --jar-color: rgba(255, 255, 255, 0.3);
+            --jar-border: #cbd5e1;
+            --pebble-color: #6366f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            gap: 50px;
+            align-items: flex-end;
+            margin-bottom: 30px;
+        }
+
+        .jar-wrapper {
+            text-align: center;
+        }
+
+        .jar {
+            width: 150px;
+            height: 200px;
+            background: var(--jar-color);
+            border: 4px solid var(--jar-border);
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap-reverse;
+            align-content: flex-start;
+            padding: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .pebble {
+            width: 25px;
+            height: 25px;
+            background: var(--pebble-color);
+            border-radius: 50%;
+            margin: 2px;
+            box-shadow: inset -3px -3px 5px rgba(0,0,0,0.2);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: drop 0.4s ease-in;
+        }
+
+        @keyframes drop {
+            0% { transform: translateY(-200px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        h2 { color: #1e293b; margin-bottom: 10px; }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover { background: #4338ca; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        .reset-btn { background: #94a3b8; }
+        .reset-btn:hover { background: #64748b; }
+
+        #counter {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Mission Accomplished Jar</h2>
+    
+    <div class="container">
+        <div class="jar-wrapper">
+            <p>To-Do</p>
+            <div id="todo-jar" class="jar">
+                <!-- Initial pebbles -->
+                <div class="pebble"></div>
+                <div class="pebble"></div>
+                <div class="pebble"></div>
+                <div class="pebble"></div>
+                <div class="pebble"></div>
+            </div>
+        </div>
+
+        <div class="jar-wrapper">
+            <p>Success Jar</p>
+            <div id="success-jar" class="jar"></div>
+            <div id="counter">Missions: 0</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="completeMission()">Complete Mission!</button>
+        <button class="reset-btn" onclick="resetJars()">Reset</button>
+    </div>
+
+    <script>
+        let count = 0;
+        const successJar = document.getElementById('success-jar');
+        const todoJar = document.getElementById('todo-jar');
+        const counterDisplay = document.getElementById('counter');
+
+        function completeMission() {
+            const pebblesInTodo = todoJar.getElementsByClassName('pebble');
+            
+            if (pebblesInTodo.length > 0) {
+                // Remove from todo jar
+                todoJar.removeChild(pebblesInTodo[0]);
+                
+                // Add to success jar
+                const newPebble = document.createElement('div');
+                newPebble.className = 'pebble';
+                // Randomize color slightly for a natural look
+                const colors = ['#6366f1', '#818cf8', '#4f46e5', '#3730a3'];
+                newPebble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                successJar.appendChild(newPebble);
+                
+                count++;
+                counterDisplay.innerText = `Missions: ${count}`;
+            } else {
+                alert("The mission jar is empty! Add more tasks to your life!");
+            }
+        }
+
+        function resetJars() {
+            successJar.innerHTML = '';
+            todoJar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const p = document.createElement('div');
+                p.className = 'pebble';
+                todoJar.appendChild(p);
+            }
+            count = 0;
+            counterDisplay.innerText = `Missions: 0`;
+        }
+    </script>
+</body>
+</html>
