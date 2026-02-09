@@ -32,6 +32,7 @@
         /* Visual Reset Button */
         .btn-clear { background: none; border: 1px solid var(--border); color: white; font-size: 0.6rem; padding: 5px; cursor: pointer; margin-top: 10px; opacity: 0.5; }
         .btn-clear:hover { opacity: 1; }
+        .user-controls {display: flex;align-items: center;gap: 12px;}
     </style>
 </head>
 <body>
@@ -126,17 +127,35 @@
         };
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('user-greet').innerText = `USER: ${user.displayName.toUpperCase().split(' ')[0]}`;
-                document.getElementById('login-btn').style.display = 'none';
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (docSnap.exists()) {
-                    winCount = docSnap.data().wins || 0;
-                    document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
-                }
-            }
-        });
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userGreet = document.getElementById('user-greet');
+
+    if (user) {
+        currentUser = user;
+        // 1. Show Name & Toggle Buttons
+        userGreet.innerText = `USER: ${user.displayName.toUpperCase().split(' ')[0]}`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        
+        // 2. Fetch Cloud Data
+        const docSnap = await getDoc(doc(db, "users", user.uid));
+        if (docSnap.exists()) {
+            winCount = docSnap.data().wins || 0;
+            document.getElementById('total-wins').innerText = winCount.toString().padStart(2, '0');
+        }
+    } else {
+        // 3. Reset UI on Logout
+        currentUser = null;
+        userGreet.innerText = `SYSTEM_OFFLINE`;
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        document.getElementById('total-wins').innerText = "00";
+    }
+});
+
+// --- ADD THIS LINE BELOW THE FUNCTION TO MAKE THE BUTTON WORK ---
+document.getElementById('logout-btn').onclick = () => auth.signOut();
 
         // --- MANUAL TIMER LOGIC ---
         document.getElementById('timer-btn').onclick = function() {
